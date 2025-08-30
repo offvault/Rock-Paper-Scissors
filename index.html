@@ -1,13 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock Paper Scissors</title>
 </head>
 <body>
-    <script>
-        console.log("Hello World")
-    </script>
+  <script>
+    // Step 2: Computer choice
+    function getComputerChoice() {
+      const choices = ['rock', 'paper', 'scissors'];
+      return choices[Math.floor(Math.random() * choices.length)];
+    }
+
+    // Step 3: Human choice
+    function getHumanChoice() {
+      const choice = prompt("Pick Rock, Paper, or Scissors: ");
+      return choice.toLowerCase(); // make it case-insensitive
+    }
+
+    // Step 5: Play a single round
+    function playRound(humanChoice, computerChoice) {
+      if (humanChoice === computerChoice) {
+        console.log(`It's a tie! You both picked ${humanChoice}.`);
+        return "tie";
+      }
+
+      if (
+        (humanChoice === "rock" && computerChoice === "scissors") ||
+        (humanChoice === "paper" && computerChoice === "rock") ||
+        (humanChoice === "scissors" && computerChoice === "paper")
+      ) {
+        console.log(`You win! ${humanChoice} beats ${computerChoice}`);
+        return "human";
+      } else {
+        console.log(`You lose! ${computerChoice} beats ${humanChoice}`);
+        return "computer";
+      }
+    }
+
+    // Step 6: Play 5 rounds
+    function playGame() {
+      let humanScore = 0;
+      let computerScore = 0;
+
+      for (let i = 0; i < 5; i++) {
+        const humanChoice = getHumanChoice();
+        const computerChoice = getComputerChoice();
+        console.log(`\nRound ${i+1}:`);
+        console.log(`You picked ${humanChoice}, Computer picked ${computerChoice}`);
+
+        const winner = playRound(humanChoice, computerChoice);
+        if (winner === "human") {
+          humanScore++;
+        } else if (winner === "computer") {
+          computerScore++;
+        }
+        console.log(`Score: You ${humanScore} - ${computerScore} Computer`);
+      }
+
+      // final winner
+      console.log("\nFinal Result:");
+      if (humanScore > computerScore) {
+        console.log("You Win The Game!");
+      } else if (computerScore > humanScore) {
+        console.log("Computer Wins The Game!");
+      } else {
+        console.log("It's A Tie overall!");
+      }
+    }
+
+    // Start game
+    playGame();
+  </script>
 </body>
 </html>
