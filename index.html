@@ -1,28 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rock Paper Scissors</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    .choices {
+      margin: 20px;
+    }
+    .choices button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .images {
+      margin: 20px;
+    }
+    .images img {
+      width: 100px;
+      height: 100px;
+      margin: 0 10px;
+      border: 3px solid transparent;
+    }
+    .selected {
+      border: 3px solid blue;
+    }
+    .result {
+      margin: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .score {
+      font-size: 20px;
+      margin: 20px;
+    }
+    .winner {
+      font-size: 24px;
+      color: green;
+      margin: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
+  <h1>Rock Paper Scissors</h1>
+  <p>First to 5 points wins!</p>
+
+  <!-- Choice Buttons -->
+  <div class="choices">
+    <button id="rock">Rock</button>
+    <button id="paper">Paper</button>
+    <button id="scissors">Scissors</button>
+  </div>
+
+  <!-- Image Placeholders -->
+  <div class="images">
+    <img id="rock-img" src="./resources/pexels-pixabay-161702.jpg" alt="Rock" />
+    <img id="paper-img" src="./resources/pexels-pixabay-163031.jpg" alt="Paper" />
+    <img id="scissors-img" src="./resources/pexels-mikebirdy-211710.jpg" alt="Scissors" />
+  </div>
+
+  <!-- Result Display -->
+  <div class="result" id="result">Make your choice!</div>
+
+  <!-- Score Display -->
+  <div class="score" id="score">You: 0 | Computer: 0</div>
+
+  <!-- Winner Announcement -->
+  <div class="winner" id="winner"></div>
+
   <script>
-    // Step 2: Computer choice
+    // DOM Elements
+    const resultDiv = document.getElementById('result');
+    const scoreDiv = document.getElementById('score');
+    const winnerDiv = document.getElementById('winner');
+    const rockBtn = document.getElementById('rock');
+    const paperBtn = document.getElementById('paper');
+    const scissorsBtn = document.getElementById('scissors');
+    
+    // Image Elements
+    const rockImg = document.getElementById('rock-img');
+    const paperImg = document.getElementById('paper-img');
+    const scissorsImg = document.getElementById('scissors-img');
+
+    // Reset image borders
+    function clearImages() {
+      rockImg.classList.remove('selected');
+      paperImg.classList.remove('selected');
+      scissorsImg.classList.remove('selected');
+    }
+
+    // Game state
+    let humanScore = 0;
+    let computerScore = 0;
+    const WINNING_SCORE = 5;
+
+    // Step 1: Computer choice
     function getComputerChoice() {
       const choices = ['rock', 'paper', 'scissors'];
       return choices[Math.floor(Math.random() * choices.length)];
     }
 
-    // Step 3: Human choice
-    function getHumanChoice() {
-      const choice = prompt("Pick Rock, Paper, or Scissors: ");
-      return choice.toLowerCase(); // make it case-insensitive
-    }
-
-    // Step 5: Play a single round
+    // Step 2: Play a single round
     function playRound(humanChoice, computerChoice) {
       if (humanChoice === computerChoice) {
-        console.log(`It's a tie! You both picked ${humanChoice}.`);
         return "tie";
       }
 
@@ -31,47 +118,60 @@
         (humanChoice === "paper" && computerChoice === "rock") ||
         (humanChoice === "scissors" && computerChoice === "paper")
       ) {
-        console.log(`You win! ${humanChoice} beats ${computerChoice}`);
         return "human";
       } else {
-        console.log(`You lose! ${computerChoice} beats ${humanChoice}`);
         return "computer";
       }
     }
 
-    // Step 6: Play 5 rounds
-    function playGame() {
-      let humanScore = 0;
-      let computerScore = 0;
+    // Handle player choice
+    function handleChoice(humanChoice) {
+      // Prevent further clicks if game is over
+      if (humanScore >= WINNING_SCORE || computerScore >= WINNING_SCORE) return;
 
-      for (let i = 0; i < 5; i++) {
-        const humanChoice = getHumanChoice();
-        const computerChoice = getComputerChoice();
-        console.log(`\nRound ${i+1}:`);
-        console.log(`You picked ${humanChoice}, Computer picked ${computerChoice}`);
+      // Get computer choice
+      const computerChoice = getComputerChoice();
 
-        const winner = playRound(humanChoice, computerChoice);
-        if (winner === "human") {
-          humanScore++;
-        } else if (winner === "computer") {
-          computerScore++;
-        }
-        console.log(`Score: You ${humanScore} - ${computerScore} Computer`);
+      // Play round
+      const result = playRound(humanChoice, computerChoice);
+
+      // Update scores
+      if (result === "human") {
+        humanScore++;
+      } else if (result === "computer") {
+        computerScore++;
       }
 
-      // final winner
-      console.log("\nFinal Result:");
-      if (humanScore > computerScore) {
-        console.log("You Win The Game!");
-      } else if (computerScore > humanScore) {
-        console.log("Computer Wins The Game!");
+      // Update images
+      clearImages();
+      if (humanChoice === 'rock') rockImg.classList.add('selected');
+      else if (humanChoice === 'paper') paperImg.classList.add('selected');
+      else if (humanChoice === 'scissors') scissorsImg.classList.add('selected');
+
+      // Update result text
+      if (result === "tie") {
+        resultDiv.textContent = `It's a tie! You both chose ${humanChoice}.`;
+      } else if (result === "human") {
+        resultDiv.textContent = `You win! ${humanChoice} beats ${computerChoice}.`;
       } else {
-        console.log("It's A Tie overall!");
+        resultDiv.textContent = `You lose! ${computerChoice} beats ${humanChoice}.`;
+      }
+
+      // Update score
+      scoreDiv.textContent = `You: ${humanScore} | Computer: ${computerScore}`;
+
+      // Check for winner
+      if (humanScore === WINNING_SCORE) {
+        winnerDiv.textContent = "🎉 You Win The Game!";
+      } else if (computerScore === WINNING_SCORE) {
+        winnerDiv.textContent = "🤖 Computer Wins The Game!";
       }
     }
 
-    // Start game
-    playGame();
+    // Add event listeners
+    rockBtn.addEventListener('click', () => handleChoice('rock'));
+    paperBtn.addEventListener('click', () => handleChoice('paper'));
+    scissorsBtn.addEventListener('click', () => handleChoice('scissors'));
   </script>
 </body>
 </html>
